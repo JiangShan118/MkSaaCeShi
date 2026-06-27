@@ -1,0 +1,84 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+/test-results
+/playwright-report
+
+# next.js
+/.next/
+/.next-e2e/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+certificates
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# claude code
+.claude
+
+# codebuddy
+.codebuddy
+
+# conductor
+.conductor
+
+# kiro
+.kiro
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# content collections
+.content-collections
+
+# fumadocs
+.source
+
+# OpenNext build output
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars
+.dev.vars*
+!.dev.vars.example
+
+# Auto Claude data directory
+.auto-claude/
+
+# Auto Claude generated files
+.auto-claude-security.json
+.auto-claude-status
+.claude_settings.json
+.worktrees/
+.security-key
+logs/security/
