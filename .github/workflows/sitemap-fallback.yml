@@ -1,6 +1,11 @@
 name: Sitemap fallback monitor
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/sitemap-fallback.yml
+      - scripts/github-fallback.mjs
   schedule:
     - cron: "30 0 * * *"
   workflow_dispatch:
