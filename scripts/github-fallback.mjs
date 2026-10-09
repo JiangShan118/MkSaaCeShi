@@ -75,12 +75,16 @@ async function discover(target) {
 const targetsResponse = await fetch(`${base}/api/fallback/targets`, { headers, signal: AbortSignal.timeout(30_000) });
 if (!targetsResponse.ok) throw new Error(`targets_http_${targetsResponse.status}`);
 const { targets } = await targetsResponse.json();
+let failures = 0;
 for (const target of targets) {
-  const urls = await discover(target);
-  const response = await fetch(`${base}/api/fallback/ingest`, { method: "POST", headers: { ...headers, "content-type": "application/json" }, body: JSON.stringify({ competitor_id: target.id, urls }), signal: AbortSignal.timeout(60_000) });
-  if (!response.ok) throw new Error(`ingest_http_${response.status}:${await response.text()}`);
-  const receipt = await response.json(); console.log(JSON.stringify({ competitor_id: target.id, urls: urls.length, run_id: receipt.run_id }));
+  try {
+    const urls = await discover(target);
+    const response = await fetch(`${base}/api/fallback/ingest`, { method: "POST", headers: { ...headers, "content-type": "application/json" }, body: JSON.stringify({ competitor_id: target.id, urls }), signal: AbortSignal.timeout(60_000) });
+    if (!response.ok) throw new Error(`ingest_http_${response.status}:${await response.text()}`);
+    const receipt = await response.json(); console.log(JSON.stringify({ competitor_id: target.id, urls: urls.length, run_id: receipt.run_id }));
+  } catch (error) { failures++; console.error(JSON.stringify({ competitor_id: target.id, error: error.message })); }
 }
-console.log(JSON.stringify({ ok: true, targets: targets.length }));
+console.log(JSON.stringify({ ok: failures === 0, targets: targets.length, failures }));
+if (failures) process.exitCode = 1;
 
 
