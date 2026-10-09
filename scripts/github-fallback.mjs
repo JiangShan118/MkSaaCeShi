@@ -82,7 +82,10 @@ for (const target of targets) {
     const response = await fetch(`${base}/api/fallback/ingest`, { method: "POST", headers: { ...headers, "content-type": "application/json" }, body: JSON.stringify({ competitor_id: target.id, urls }), signal: AbortSignal.timeout(60_000) });
     if (!response.ok) throw new Error(`ingest_http_${response.status}:${await response.text()}`);
     const receipt = await response.json(); console.log(JSON.stringify({ competitor_id: target.id, urls: urls.length, run_id: receipt.run_id }));
-  } catch (error) { failures++; console.error(JSON.stringify({ competitor_id: target.id, error: error.message })); }
+  } catch (error) {
+    failures++; const errorCode = String(error.message).slice(0, 300); console.error(JSON.stringify({ competitor_id: target.id, error: errorCode }));
+    try { await fetch(`${base}/api/fallback/failure`, { method: "POST", headers: { ...headers, "content-type": "application/json" }, body: JSON.stringify({ competitor_id: target.id, error_code: errorCode }), signal: AbortSignal.timeout(30_000) }); } catch (reportError) { console.error(JSON.stringify({ competitor_id: target.id, report_error: reportError.message })); }
+  }
 }
 console.log(JSON.stringify({ ok: failures === 0, targets: targets.length, failures }));
 if (failures) process.exitCode = 1;
