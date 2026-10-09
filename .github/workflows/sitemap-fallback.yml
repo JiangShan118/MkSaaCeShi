@@ -1,0 +1,29 @@
+name: Sitemap fallback monitor
+
+on:
+  schedule:
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: sitemap-fallback-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: node scripts/github-fallback.mjs
+        env:
+          MONITOR_BASE: https://sitemap-monitor-worker.dayue1068.workers.dev
+
+
