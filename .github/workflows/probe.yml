@@ -23,7 +23,7 @@ jobs:
             --header 'Accept: application/xml,text/xml,text/plain' \
             --dump-header headers.txt --output response.bin --write-out '%{http_code}' "$target")
           content_type=$(awk 'BEGIN{IGNORECASE=1} /^content-type:/{value=$0} END{sub(/^[^:]+:[[:space:]]*/,"",value); sub(/\r$/, "", value); print value}' headers.txt)
-          loc_count=$(grep -ao '<loc>' response.bin | wc -l | tr -d ' ')
+          loc_count=$({ grep -ao '<loc>' response.bin || true; } | wc -l | tr -d ' ')
           if grep -aq '<urlset\|<sitemapindex' response.bin; then valid_xml=yes; else valid_xml=no; fi
           printf 'status=%s\ncontent_type=%s\nloc_count=%s\nvalid_sitemap=%s\n' "$status" "$content_type" "$loc_count" "$valid_xml"
           test "$status" = '200'
