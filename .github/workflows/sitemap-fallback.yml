@@ -1,4 +1,5 @@
 name: Sitemap fallback monitor
+# Manual rerun marker: 2026-10-10
 
 on:
   push:
