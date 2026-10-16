@@ -65,7 +65,7 @@ async function discover(target) {
       if (!isIndex && !isUrlset) throw new Error("invalid_sitemap_document");
       const locs = [...xml.matchAll(/<loc>([\s\S]*?)<\/loc>/gi)].map((match) => decodeXml(match[1].trim())).filter(Boolean);
       if (isIndex) for (const loc of locs) { if (visited.size + queue.length >= maxDocuments) throw new Error("document_budget_exceeded"); queue.push(safeUrl(loc, host).toString()); }
-      else for (const loc of locs) { const value = safeUrl(loc, host); value.hash = ""; urls.add(value.toString().replace(/\/$/, "")); if (urls.size > maxUrls) throw new Error("url_budget_exceeded"); }
+      else for (const loc of locs) { const value = safeUrl(loc, host); value.hash = ""; if (value.pathname.length > 1) value.pathname = value.pathname.replace(/\/+$/, ""); urls.add(value.toString()); if (urls.size > maxUrls) throw new Error("url_budget_exceeded"); }
     } catch (error) { failures.push(`${sitemap}:${error.message}`); }
   }
   if (!urls.size || failures.length || queue.length) throw new Error(`incomplete_discovery:${failures.join("|") || "budget_exceeded"}`);
